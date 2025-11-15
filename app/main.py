@@ -1,11 +1,18 @@
 from fastapi import FastAPI
-from app.routes import transcript, summary
 from app.logger import logger
+from app.routes.transcripts import router as transcripts_router
+from app.routes.summary import router as summary_router
 
 app = FastAPI(title="Polygraf Audio Summarizer")
+logger.info("FastAPI app created.")
 
-app.include_router(transcript.router)
-app.include_router(summary.router)
+app.include_router(transcripts_router)
+app.include_router(summary_router)
+
+@app.get("/health")
+def health():
+    logger.info("Health check OK.")
+    return {"status": "ok"}
 
 @app.on_event("startup")
 def startup():

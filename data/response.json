@@ -1,0 +1,717 @@
+[
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226205534,
+        "duration_ms": 10208,
+        "transcription": {
+            "transcript": "Hey, hi Manish. So, welcome today. Let's discuss a pair robustness. How do you"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226211260,
+        "duration_ms": 4483,
+        "transcription": {
+            "transcript": "approach designing your scalable distributed API rate limiter"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226215863,
+        "duration_ms": 3050,
+        "transcription": {
+            "transcript": "So what are your core goals?"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226219236,
+        "duration_ms": 4710,
+        "transcription": {
+            "transcript": "That you want to try achieve here."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226227251,
+        "duration_ms": 3000,
+        "transcription": {
+            "transcript": "Hi, thanks for the introduction."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226230400,
+        "duration_ms": 14671,
+        "transcription": {
+            "transcript": "So the main goals are like a prediction and fairness uses of our service. So we"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226237001,
+        "duration_ms": 8070,
+        "transcription": {
+            "transcript": "want to protect our backend services from being overhand by a sudden surge in"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226244384,
+        "duration_ms": 688,
+        "transcription": {
+            "transcript": "request"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226245777,
+        "duration_ms": 6916,
+        "transcription": {
+            "transcript": "either those can be malicious or accidental, which prevents so which degradation"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226253248,
+        "duration_ms": 10922,
+        "transcription": {
+            "transcript": "So this fairness ensures that one heavy user doesn't consume all the resources"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226260054,
+        "duration_ms": 4117,
+        "transcription": {
+            "transcript": "and impact embedding the others."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226269135,
+        "duration_ms": 12797,
+        "transcription": {
+            "transcript": "Okay, that's a good one. So let's assume the requirements issue limit a client"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226275342,
+        "duration_ms": 6589,
+        "transcription": {
+            "transcript": "to hundred requests per minute. So what architecture layer would you place this"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226280278,
+        "duration_ms": 1652,
+        "transcription": {
+            "transcript": "logic in and why"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226282192,
+        "duration_ms": 2920,
+        "transcription": {
+            "transcript": "Can you briefly explain that one?"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226291950,
+        "duration_ms": 30630,
+        "transcription": {
+            "transcript": "Sure, I would place the rate limiter in API Gateway or maybe in a dedicated, its"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226297131,
+        "duration_ms": 25449,
+        "transcription": {
+            "transcript": "service. So, this acts as a shield, if we put it in a application logic. But"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226304840,
+        "duration_ms": 17741,
+        "transcription": {
+            "transcript": "this would block all the requests still consume resources like opening and"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226308750,
+        "duration_ms": 13832,
+        "transcription": {
+            "transcript": "closing the connections or routing to the application. So which defeats the"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226313664,
+        "duration_ms": 8918,
+        "transcription": {
+            "transcript": "major purpose of here, what we were trying to achieve. So the gateway drops the"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226319114,
+        "duration_ms": 3468,
+        "transcription": {
+            "transcript": "request before it even reaches government application."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226327001,
+        "duration_ms": 9142,
+        "transcription": {
+            "transcript": "How that makes sense. So Now let's talk about the implementation. So there are"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226331801,
+        "duration_ms": 4345,
+        "transcription": {
+            "transcript": "several algorithms. So which one would you choose? And why?"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226343249,
+        "duration_ms": 9717,
+        "transcription": {
+            "transcript": "The common ones are like most usually or they're like a fixed window sliding"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226346946,
+        "duration_ms": 6021,
+        "transcription": {
+            "transcript": "window and sliding window counter. I would select the sliding window counter"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226351356,
+        "duration_ms": 1611,
+        "transcription": {
+            "transcript": "algorithm."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226359808,
+        "duration_ms": 6226,
+        "transcription": {
+            "transcript": "Oh, so why that one over and say that a fixed window counter?"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226373395,
+        "duration_ms": 34525,
+        "transcription": {
+            "transcript": "At the fixed window counter is it's a simple but suffers from boundary problem."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226378686,
+        "duration_ms": 29233,
+        "transcription": {
+            "transcript": "If the limit resets at 100 seconds, a user sends hundred requested 59th second"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226384201,
+        "duration_ms": 23720,
+        "transcription": {
+            "transcript": "and 100 more at 0 1 per second. So effectively sending 200 seconds in two"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226390497,
+        "duration_ms": 17424,
+        "transcription": {
+            "transcript": "seconds. So the sliding window counter mitigates. This what is the flow of"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226397697,
+        "duration_ms": 10224,
+        "transcription": {
+            "transcript": "traffic by waiting? The request count from the previous window and combining it"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226402587,
+        "duration_ms": 5335,
+        "transcription": {
+            "transcript": "with the current one so which helps us in a smooth. Transition enforcement."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226412627,
+        "duration_ms": 2224,
+        "transcription": {
+            "transcript": "Okay, that makes sense."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226415468,
+        "duration_ms": 11393,
+        "transcription": {
+            "transcript": "So given the need of high speed read Write access and distribution across"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226420785,
+        "duration_ms": 6076,
+        "transcription": {
+            "transcript": "multiple Gateway instances. What kind of data store would you like to maintain"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226425202,
+        "duration_ms": 1659,
+        "transcription": {
+            "transcript": "the request count?"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226431198,
+        "duration_ms": 13946,
+        "transcription": {
+            "transcript": "I would like to use something like in memory store Like Redis. It offers the low"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226434975,
+        "duration_ms": 10168,
+        "transcription": {
+            "transcript": "latency and high throughput required to check and upgrade the counts for every"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226439937,
+        "duration_ms": 5206,
+        "transcription": {
+            "transcript": "API request. So the radiation database would introduce too much latency here."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226450316,
+        "duration_ms": 13789,
+        "transcription": {
+            "transcript": "Okay, so in a distributed setup, with multiple API, gateways talking to the same"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226454365,
+        "duration_ms": 9742,
+        "transcription": {
+            "transcript": "radius cluster, how do you ensure that operations? Checking the count and then"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226458839,
+        "duration_ms": 5267,
+        "transcription": {
+            "transcript": "incrementing it up performed atomically to avoid the race conditions."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226468042,
+        "duration_ms": 15396,
+        "transcription": {
+            "transcript": "So like we must use atomic operations specifically, like already saw first"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226473684,
+        "duration_ms": 9754,
+        "transcription": {
+            "transcript": "commands, like incr, or we could even make use of this Luca scripts for more"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226479591,
+        "duration_ms": 3846,
+        "transcription": {
+            "transcript": "complex, logics where we can use them within the radius."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226483581,
+        "duration_ms": 10146,
+        "transcription": {
+            "transcript": "so, this ensures the operations are treated as a single unit and then preventing"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226489845,
+        "duration_ms": 3881,
+        "transcription": {
+            "transcript": "two different requests have been"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226493907,
+        "duration_ms": 6293,
+        "transcription": {
+            "transcript": "To I mean two concurrent request some mistakenly getting through the limit is"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226499640,
+        "duration_ms": 561,
+        "transcription": {
+            "transcript": "reach."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226500408,
+        "duration_ms": 17672,
+        "transcription": {
+            "transcript": "So we also set an appropriate a time to live on the key matching, our window"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226506702,
+        "duration_ms": 11379,
+        "transcription": {
+            "transcript": "duration, so we can have like some 60 second implemented. So we can make use of"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226512198,
+        "duration_ms": 5883,
+        "transcription": {
+            "transcript": "this increment counter in the radius and get this updated."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226522983,
+        "duration_ms": 8564,
+        "transcription": {
+            "transcript": "Okay, so one last quotation. So, how do we identify the client? We are limiting"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226528500,
+        "duration_ms": 3047,
+        "transcription": {
+            "transcript": "how we use the IP address."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226535671,
+        "duration_ms": 12522,
+        "transcription": {
+            "transcript": "So using the IP address is risky because let's say a group of college students"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226541559,
+        "duration_ms": 6633,
+        "transcription": {
+            "transcript": "are connected to a same college Wi-Fi, and their access in the platform. So are"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226546239,
+        "duration_ms": 1953,
+        "transcription": {
+            "transcript": "we going to"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226549133,
+        "duration_ms": 24129,
+        "transcription": {
+            "transcript": "District all of them. No, right. So that case, like we would be needing some"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226555085,
+        "duration_ms": 18177,
+        "transcription": {
+            "transcript": "like some authentication mechanism here. So I can think of, like two approaches."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226560513,
+        "duration_ms": 12750,
+        "transcription": {
+            "transcript": "Maybe the first one we can have some unique identify who's ready? Maybe. We can"
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226565797,
+        "duration_ms": 7466,
+        "transcription": {
+            "transcript": "extract it from a JW token or maybe we can pass an X API key to the headers."
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226577470,
+        "duration_ms": 8763,
+        "transcription": {
+            "transcript": "Oh, that's perfect. Like I mean I got what are all the information that I'm"
+        }
+    },
+    {
+        "speaker_name": "Interviewer",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/422",
+        "speaker_user_uuid": null,
+        "speaker_is_host": false,
+        "timestamp_ms": 1763226581847,
+        "duration_ms": 4387,
+        "transcription": {
+            "transcript": "looking for? Thanks for joining the call. Manish have a good day."
+        }
+    },
+    {
+        "speaker_name": "Manish Reddy",
+        "speaker_uuid": "spaces/AQVS1xe3YHYB/devices/421",
+        "speaker_user_uuid": null,
+        "speaker_is_host": true,
+        "timestamp_ms": 1763226588156,
+        "duration_ms": 892,
+        "transcription": {
+            "transcript": "Thank you."
+        }
+    }
+]

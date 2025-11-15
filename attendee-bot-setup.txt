@@ -1,0 +1,17 @@
+# all containers are down
+docker compose -f dev.docker-compose.yaml down
+
+# rebuild fresh containers
+docker compose -f dev.docker-compose.yaml build
+docker compose -f dev.docker-compose.yaml up
+
+#new terminal and create superuser
+docker compose -f dev.docker-compose.yaml exec attendee-app-local python manage.py createsuperuser
+
+http://localhost:8000/admin/
+
+username: admin
+email: admin@polygraf.com
+pass: admin
+
+API KEY - u0T3T7QRaYginhQWhVqprRyNvMzKdt7e

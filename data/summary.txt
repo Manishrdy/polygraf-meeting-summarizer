@@ -1,0 +1,19 @@
+```json
+{
+  "key_points": [
+    "The meeting focused on designing a rate limiting service to protect backend systems from sudden surges in requests.",
+    "Manish proposed placing the rate limiter in an API gateway or as a dedicated service, acting as a shield for the main application.",
+    "A requirement was discussed to limit clients to 100 requests per minute.",
+    "Manish recommended using the sliding window counter algorithm for implementing the rate limiter, comparing it with fixed and sliding window algorithms."
+  ],
+  "decisions": [
+    "The rate limiter will be placed in an API gateway or a dedicated service layer.",
+    "The sliding window counter algorithm is the preferred method for implementing the rate limiting logic."
+  ],
+  "action_items": [],
+  "per_speaker_summary": {
+    "Manish Reddy": "Manish started by asking about the core goals for the rate limiting service. He suggested placing the rate limiter in an API gateway or a dedicated service to act as a shield and prevent resource exhaustion by heavy users. He then proposed using the sliding window counter algorithm for its implementation.",
+    "Interviewer": "The Interviewer welcomed Manish and introduced the topic of designing a rate limiting service. They clarified that the primary goal is to protect backend services from sudden and potentially malicious surges in requests."
+  }
+}
+```

@@ -1,0 +1,262 @@
+[
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "you"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "you"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "you you"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "you"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "Hi, Manish. So welcome. Today let's discuss a pair of business. How do you approach design?"
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "So welcome today let's discuss a pair of business. How do you approach design?"
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "How do you approach design?"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "What are your core goals that you want to try to achieve here? Thanks for the introduction."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "achieve here. Thanks for the introduction."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "Thanks for the introduction."
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "service. So we want to protect our pack and services from being overhead by a sudden surge in request. Either that those can be malicious or"
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "from being overhead by a sudden surge in requests. Either that, those can be malicious or..."
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "request. Either that those can be malicious or I"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "So this fineness ensures that one heavy user doesn't consume all the resources and impacting the others."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "all the resources and impacting the others."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "Okay, that's a good one. So let's assume the requirements issue limit a client to 100 requests per minute. So what architecture layer would"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "client to 100 requests per minute. So what architecture layer would"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "place this logic in and why? Can you briefly explain that one?"
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "So, I would place the red limiter in a API gateway or maybe in a dedicated X service. So, this acts as a shield if we put it in an application logic."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "I would place the red limiter in a API gateway or maybe in a dedicated it service. So this acts as a shield if we put it in an application logic."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "So this acts as a shield if we put it in a application logic."
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "and closing the connections or routing to the application. So which defeats the major purpose of here what we are trying to do."
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "purpose of here what we are trying to do."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "our main application. That makes sense. Now let's talk about the implementation. There are several algorithms."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "That makes sense. So now let's talk about the implementation. So there are several algorithms."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "There are several algorithms."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "and why. The common ones are like most usually are they like a fixed window, sliding window and sliding window counter. I would select the sliding window counter algorithm."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "The common ones are like most usually, or like a fixed window, sliding window and sliding window counter. I would select the sliding window counter algorithm."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "of its window, sliding window and sliding window counter. I would select the sliding window counter algorithm."
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "about algorithm"
+  },
+  {
+    "speaker": "Interviewer",
+    "text": "say that or fix a window counter."
+  },
+  {
+    "speaker": "Interviewer",
+    "text": ""
+  },
+  {
+    "speaker": "Manish Reddy",
+    "text": "by the fixed window"
+  }
+]

@@ -1,5 +1,4 @@
-version: '3.8'
-
+# Remove the 'version: 3.8' line
 services:
   redis:
     image: redis:7-alpine
@@ -10,7 +9,7 @@ services:
 
   api:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8000:8000"
     env_file:
@@ -18,7 +17,8 @@ services:
     environment:
       - REDIS_HOST=redis
     volumes:
-      - ./data:/app/data
+      - ./data:/app/data  # For file uploads
+      - ./app:/app/app    # <-- THIS IS THE FIX (mounts your live code)
     depends_on:
       - redis
 
@@ -30,7 +30,8 @@ services:
     environment:
       - REDIS_HOST=redis
     volumes:
-      - ./data:/app/data
+      - ./data:/app/data  # For file uploads
+      - ./app:/app/app    # <-- THIS IS THE FIX (mounts your live code)
     depends_on:
       - redis
 
@@ -42,7 +43,8 @@ services:
     environment:
       - REDIS_HOST=redis
     volumes:
-      - ./data:/app/data
+      - ./data:/app/data  # For file uploads
+      - ./app:/app/app    # <-- THIS IS THE FIX (mounts your live code)
     depends_on:
       - redis
 
@@ -54,7 +56,8 @@ services:
     environment:
       - REDIS_HOST=redis
     volumes:
-      - ./data:/app/data
+      - ./data:/app/data  # For file uploads
+      - ./app:/app/app    # <-- THIS IS THE FIX (mounts your live code)
     depends_on:
       - redis
 

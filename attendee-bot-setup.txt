@@ -25,3 +25,5 @@ docker rm polygraf-app
 docker build -t polygraf-backend .
 
 docker run -d -p 8000:8000 --name polygraf-app --env-file .env -v "%cd%\data":/app/data polygraf-backend
+
+docker compose up --build --force-recreate -d

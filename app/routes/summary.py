@@ -1,4 +1,3 @@
-# app/routes/summary.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional
@@ -7,16 +6,20 @@ import os, json, re
 from app.logger import get_logger
 from google import genai
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 logger = get_logger(__name__)
 router = APIRouter(tags=["summary"])
 
 class TranscriptsEnvelope(BaseModel):
     per_person: Dict[str, List[str]] = Field(..., description="Per-person transcript map")
     class Config:
-        extra = "allow"  # ignore other keys (status/saved_to/speakers/counts/etc.)
+        extra = "allow"
 
 def _coerce_json(text: str) -> Dict[str, Any]:
-    """Try to parse strict JSON; if not, extract the first {...} block; else wrap raw."""
     if not text:
         return {"raw": ""}
 
@@ -26,7 +29,6 @@ def _coerce_json(text: str) -> Dict[str, Any]:
     except Exception:
         pass
 
-    # 2) try to grab the first JSON object in the string
     try:
         start = text.find("{")
         end = text.rfind("}")
@@ -49,7 +51,6 @@ def summary_from_transcripts(body: TranscriptsEnvelope) -> Dict[str, Any]:
             logger.error("Missing or invalid per_person in request.")
             raise HTTPException(status_code=400, detail="Missing or invalid per_person in request body.")
 
-        # --- LLM setup ---
         api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if not api_key:
             logger.error("GEMINI_API_KEY/GOOGLE_API_KEY is not set.")
@@ -58,7 +59,6 @@ def summary_from_transcripts(body: TranscriptsEnvelope) -> Dict[str, Any]:
 
         client = genai.Client(api_key=api_key)
 
-        # Prompt asks for STRICT JSON; we won’t pass generation_config (compat with older libs)
         prompt = {
             "instruction": (
                 "Return ONLY strict JSON with keys: "

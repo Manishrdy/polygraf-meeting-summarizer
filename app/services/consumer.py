@@ -12,10 +12,6 @@ def _safe_name(name: str) -> str:
     return re.sub(r"[^A-Za-z0-9_\-]+", "_", name.strip())
 
 def consume_diarized_segments(json_path: str, audio_path: str):
-    """
-    Reads diarized JSON + .wav audio, aligns timestamps relative to the earliest
-    segment, exports 16k mono WAV chunks, and returns segment metadata.
-    """
     output_dir = os.path.join(DATA_DIR, "sample_audio")
     os.makedirs(output_dir, exist_ok=True)
 

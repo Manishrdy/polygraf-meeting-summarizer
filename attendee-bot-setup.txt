@@ -15,3 +15,6 @@ email: admin@polygraf.com
 pass: admin
 
 API KEY - u0T3T7QRaYginhQWhVqprRyNvMzKdt7e
+
+#docker run
+docker exec polygraf-app python run_consumer.py

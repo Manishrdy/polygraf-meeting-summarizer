@@ -1,11 +1,13 @@
-# app/routes/transcripts.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Any, Dict, List
+from typing import Dict, List
 from pathlib import Path
-import os, json
+import os
+import json
+import concurrent.futures
 
 from app.logger import get_logger
+from app.services.transcriber import transcribe_audio
 
 logger = get_logger(__name__)
 router = APIRouter(tags=["transcripts"])
@@ -23,100 +25,96 @@ class TranscriptsOut(BaseModel):
     saved_to: str
     speakers: List[str]
     counts: Dict[str, int]
-    per_person: Dict[str, List[str]]  # ← include the generated content in the response
+    per_person: Dict[str, List[str]]
 
-def _load_segments(payload: Any) -> List[Dict[str, Any]]:
-    if isinstance(payload, list):
-        return payload
-    if isinstance(payload, dict):
-        for k in ("segments", "utterances", "items", "results"):
-            v = payload.get(k)
-            if isinstance(v, list):
-                return v
-    return []
+def process_single_file(audio_file: Path, diar_data: List[Dict]) -> Dict:
+    """
+    Helper function to be run in a separate thread.
+    Returns a dict with {speaker: str, text: str} or None if failed.
+    """
+    try:
+        filename_stem = audio_file.stem
+        # Filename format expected: "SpeakerName_Index.wav"
+        parts = filename_stem.rsplit('_', 1)
 
-def _extract_speaker(seg: Dict[str, Any]) -> str:
-    for k in ("speaker", "speaker_id", "spk", "name", "speaker_name"):
-        v = seg.get(k)
-        if v not in (None, ""):
-            return str(v)
-    v = seg.get("speaker_uuid") or seg.get("speaker_user_uuid")
-    return str(v) if v else "UNKNOWN"
+        if len(parts) < 2 or not parts[1].isdigit():
+            return None
+        
+        index = int(parts[1])
 
-def _extract_text(seg: Dict[str, Any]) -> str:
-    # Try common top-level keys first
-    for k in ("text", "transcript", "utterance", "content"):
-        v = seg.get(k)
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-
-    # Then nested transcription structures
-    t = seg.get("transcription")
-    if isinstance(t, dict):
-        v = t.get("transcript")
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-        alts = t.get("alternatives")
-        if isinstance(alts, list):
-            for alt in alts:
-                if isinstance(alt, dict):
-                    v = alt.get("transcript") or alt.get("content")
-                    if isinstance(v, str) and v.strip():
-                        return v.strip()
-
-    return ""
+        # Look up speaker
+        speaker_name = "Unknown"
+        if 0 <= index < len(diar_data):
+            speaker_name = diar_data[index].get("speaker_name", "Unknown")
+        
+        # Transcribe (Heavy Operation)
+        text = transcribe_audio(str(audio_file))
+        
+        if text:
+            return {"speaker": speaker_name, "text": text}
+    except Exception as e:
+        logger.error(f"Error in thread for {audio_file.name}: {e}")
+    
+    return None
 
 @router.post("/transcripts", response_model=TranscriptsOut)
 def build_per_person_transcripts(body: TranscriptsIn) -> TranscriptsOut:
     try:
-        logger.info("POST /transcripts called.")
+        logger.info("POST /transcripts called - Starting CONCURRENT transcription.")
         DATA_DIR.mkdir(parents=True, exist_ok=True)
 
         audio_dir = Path(body.audio_chunks_dir)
         diar_path = Path(body.diarization_json_path)
 
-        # Validate paths
+        # 1. Validation
         if not audio_dir.exists() or not audio_dir.is_dir():
-            logger.error(f"Audio folder not found: {audio_dir}")
             raise HTTPException(status_code=400, detail=f"Audio folder not found: {audio_dir}")
-
-        audio_files = [p for p in audio_dir.iterdir() if p.suffix.lower() in AUDIO_EXTS]
-        if not audio_files:
-            logger.error("No audio chunks found with supported extensions.")
-            raise HTTPException(status_code=400, detail="No audio chunks found (.wav/.mp3/.m4a/.ogg/.flac).")
-
         if not diar_path.exists() or not diar_path.is_file():
-            logger.error(f"Diarization JSON not found: {diar_path}")
             raise HTTPException(status_code=400, detail=f"Diarization JSON not found: {diar_path}")
 
-        # Load diarization JSON
-        diar_json = json.loads(diar_path.read_text(encoding="utf-8"))
-        segments = _load_segments(diar_json)
-        if not segments:
-            logger.error("Could not find segments in diarization JSON.")
-            raise HTTPException(status_code=400, detail="Invalid diarization JSON: no segments/utterances/items/results.")
+        # 2. Load Diarization Data
+        try:
+            diar_data = json.loads(diar_path.read_text(encoding="utf-8"))
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid diarization JSON.")
 
-        # Aggregate per speaker
+        # 3. Find Audio Files
+        audio_files = [p for p in audio_dir.iterdir() if p.suffix.lower() in AUDIO_EXTS]
+        if not audio_files:
+            raise HTTPException(status_code=400, detail="No audio chunks found.")
+
+        # Sort to maintain some logical order before processing
+        audio_files.sort(key=lambda p: p.name)
+
         per_person: Dict[str, List[str]] = {}
         counts: Dict[str, int] = {}
 
-        for seg in segments:
-            text = _extract_text(seg)
-            if not text:
-                continue
-            speaker = _extract_speaker(seg)
-            per_person.setdefault(speaker, []).append(text)
-            counts[speaker] = counts.get(speaker, 0) + 1
+        # 4. Concurrent Execution
+        # We use a ThreadPoolExecutor. The max_workers defaults to 5 * num_cpus, 
+        # which is usually fine for I/O + some CPU tasks like this.
+        # Adjust max_workers if your CPU throttles (e.g., max_workers=4)
+        logger.info(f"Processing {len(audio_files)} files in parallel...")
+        
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Submit all tasks
+            future_to_file = {
+                executor.submit(process_single_file, f, diar_data): f 
+                for f in audio_files
+            }
+            
+            # Process results as they complete
+            for future in concurrent.futures.as_completed(future_to_file):
+                result = future.result()
+                if result:
+                    spk = result["speaker"]
+                    txt = result["text"]
+                    per_person.setdefault(spk, []).append(txt)
+                    counts[spk] = counts.get(spk, 0) + 1
 
-        if not per_person:
-            logger.error("No textual content extracted from diarization JSON.")
-            raise HTTPException(status_code=400, detail="No text found in diarization segments.")
-
-        # Save output to disk
+        # 5. Save Output
         OUT_PATH.write_text(json.dumps(per_person, ensure_ascii=False, indent=2), encoding="utf-8")
-        logger.info(f"per_person_transcripts saved -> {OUT_PATH}")
+        logger.info(f"Transcription complete. Saved to {OUT_PATH}")
 
-        # Also return the content inline
         return TranscriptsOut(
             status="ok",
             saved_to=str(OUT_PATH),
@@ -124,8 +122,9 @@ def build_per_person_transcripts(body: TranscriptsIn) -> TranscriptsOut:
             counts=counts,
             per_person=per_person,
         )
+
     except HTTPException:
         raise
     except Exception as e:
-        logger.exception("Failed to build per_person_transcripts.")
-        raise HTTPException(status_code=500, detail=f"Failed to build per_person_transcripts: {e}")
+        logger.exception("Fatal error in /transcripts")
+        raise HTTPException(status_code=500, detail=str(e))

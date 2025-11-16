@@ -18,3 +18,10 @@ API KEY - u0T3T7QRaYginhQWhVqprRyNvMzKdt7e
 
 #docker run
 docker exec polygraf-app python run_consumer.py
+
+docker stop polygraf-app
+docker rm polygraf-app
+
+docker build -t polygraf-backend .
+
+docker run -d -p 8000:8000 --name polygraf-app --env-file .env -v "%cd%\data":/app/data polygraf-backend

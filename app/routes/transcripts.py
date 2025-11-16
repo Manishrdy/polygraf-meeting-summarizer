@@ -17,6 +17,7 @@ OUT_PATH = DATA_DIR / "per_person_transcripts.json"
 AUDIO_EXTS = {".wav", ".mp3", ".m4a", ".ogg", ".flac"}
 
 class TranscriptsIn(BaseModel):
+    # We are back to asking for the FOLDER, not the raw file
     audio_chunks_dir: str = Field(..., description="Folder path containing audio chunks")
     diarization_json_path: str = Field(..., description="Path to diarized response.json")
 
@@ -29,12 +30,11 @@ class TranscriptsOut(BaseModel):
 
 def process_single_file(audio_file: Path, diar_data: List[Dict]) -> Dict:
     """
-    Helper function to be run in a separate thread.
-    Returns a dict with {speaker: str, text: str} or None if failed.
+    Helper function to transcribe a single pre-split file.
     """
     try:
+        # Expect filename: "SpeakerName_Index.wav"
         filename_stem = audio_file.stem
-        # Filename format expected: "SpeakerName_Index.wav"
         parts = filename_stem.rsplit('_', 1)
 
         if len(parts) < 2 or not parts[1].isdigit():
@@ -42,25 +42,25 @@ def process_single_file(audio_file: Path, diar_data: List[Dict]) -> Dict:
         
         index = int(parts[1])
 
-        # Look up speaker
+        # Look up speaker from original JSON
         speaker_name = "Unknown"
         if 0 <= index < len(diar_data):
             speaker_name = diar_data[index].get("speaker_name", "Unknown")
         
-        # Transcribe (Heavy Operation)
+        # Transcribe locally (Robust function handles errors)
         text = transcribe_audio(str(audio_file))
         
         if text:
             return {"speaker": speaker_name, "text": text}
     except Exception as e:
-        logger.error(f"Error in thread for {audio_file.name}: {e}")
+        logger.error(f"Error processing {audio_file.name}: {e}")
     
     return None
 
 @router.post("/transcripts", response_model=TranscriptsOut)
 def build_per_person_transcripts(body: TranscriptsIn) -> TranscriptsOut:
     try:
-        logger.info("POST /transcripts called - Starting CONCURRENT transcription.")
+        logger.info("POST /transcripts called - Batch Processing Mode.")
         DATA_DIR.mkdir(parents=True, exist_ok=True)
 
         audio_dir = Path(body.audio_chunks_dir)
@@ -69,10 +69,10 @@ def build_per_person_transcripts(body: TranscriptsIn) -> TranscriptsOut:
         # 1. Validation
         if not audio_dir.exists() or not audio_dir.is_dir():
             raise HTTPException(status_code=400, detail=f"Audio folder not found: {audio_dir}")
-        if not diar_path.exists() or not diar_path.is_file():
-            raise HTTPException(status_code=400, detail=f"Diarization JSON not found: {diar_path}")
+        if not diar_path.exists():
+            raise HTTPException(status_code=400, detail=f"JSON not found: {diar_path}")
 
-        # 2. Load Diarization Data
+        # 2. Load Diarization Data (for Speaker Mapping)
         try:
             diar_data = json.loads(diar_path.read_text(encoding="utf-8"))
         except Exception:
@@ -83,26 +83,21 @@ def build_per_person_transcripts(body: TranscriptsIn) -> TranscriptsOut:
         if not audio_files:
             raise HTTPException(status_code=400, detail="No audio chunks found.")
 
-        # Sort to maintain some logical order before processing
         audio_files.sort(key=lambda p: p.name)
 
         per_person: Dict[str, List[str]] = {}
         counts: Dict[str, int] = {}
 
-        # 4. Concurrent Execution
-        # We use a ThreadPoolExecutor. The max_workers defaults to 5 * num_cpus, 
-        # which is usually fine for I/O + some CPU tasks like this.
-        # Adjust max_workers if your CPU throttles (e.g., max_workers=4)
+        # 4. Parallel Processing
+        # We process existing files, no new splitting happens here.
         logger.info(f"Processing {len(audio_files)} files in parallel...")
         
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Submit all tasks
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             future_to_file = {
                 executor.submit(process_single_file, f, diar_data): f 
                 for f in audio_files
             }
             
-            # Process results as they complete
             for future in concurrent.futures.as_completed(future_to_file):
                 result = future.result()
                 if result:

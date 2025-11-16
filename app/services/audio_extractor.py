@@ -1,19 +1,28 @@
 import os
 import moviepy.editor as mp
+from app.logger import get_logger
 
-def extract_audio():
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    #hardcoded values for testing
-    input_video = os.path.join(project_root, "data", "bot_AkYnbDBy0YQigs48-rec_vZhODQwGYZHhi3cC.mp4")
-    output_audio = os.path.join(project_root, "data", "bot_AkYnbDBy0YQigs48-rec_vZhODQwGYZHhi3cC.wav")
+logger = get_logger(__name__)
 
-    print(f"Extracting audio from: {input_video}")
-    if not os.path.exists(input_video):
-        raise FileNotFoundError(f"Input file not found: {input_video}")
+def extract_audio(input_video_path: str, output_audio_path: str):
 
-    video = mp.VideoFileClip(input_video)
-    video.audio.write_audiofile(output_audio, codec="pcm_s16le")
-    print(f"Audio extracted successfully: {output_audio}")
+    logger.info(f"Extracting audio from: {input_video_path}")
+    
+    if not os.path.exists(input_video_path):
+        raise FileNotFoundError(f"Input file not found: {input_video_path}")
 
-if __name__ == "__main__":
-    extract_audio()
+    try:
+        # Load video and save audio
+        video = mp.VideoFileClip(input_video_path)
+        
+        # Setup codec pcm_s16le for WAV
+        video.audio.write_audiofile(output_audio_path, codec="pcm_s16le", verbose=False, logger=None)
+        
+        # Close to release resources
+        video.close()
+        
+        logger.info(f"Audio extracted successfully: {output_audio_path}")
+        return output_audio_path
+    except Exception as e:
+        logger.error(f"Audio extraction failed: {e}")
+        raise

@@ -3,6 +3,8 @@ uvicorn
 openai-whisper
 python-dotenv
 requests
-moviepy
+moviepy<2.0
 pydub
 google-genai
+redis
+python-multipart

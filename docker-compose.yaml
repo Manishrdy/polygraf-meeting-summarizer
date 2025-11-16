@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+
+  worker-splitter:
+    build: .
+    command: python -u app/workers/splitter.py
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+
+  worker-transcriber:
+    build: .
+    command: python -u app/workers/transcriber.py
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+
+  worker-summarizer:
+    build: .
+    command: python -u app/workers/summarizer.py
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:

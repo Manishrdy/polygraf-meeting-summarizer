@@ -2,6 +2,8 @@
 
 > A scalable, asynchronous Python backend that turns long meeting recordings into accurate transcripts and concise, AI-generated summaries.
 
+This system is built on a distributed, queue-based architecture using Redis and Docker. It can process large audio/video files in the background without blocking the user, providing a job ID to track progress and retrieve the final results.
+
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-blue.svg)](https://fastapi.tiangolo.com/)
 [![Redis](https://img.shields.io/badge/Redis-7+-D82C20.svg)](https://redis.io/)
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-supported-2496ED.svg)](https://docs.docker.com/compose/)

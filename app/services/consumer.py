@@ -6,7 +6,7 @@ from app.logger import get_logger
 from app.config import DATA_DIR
 
 logger = get_logger()
-logger.info("Inside consumer from app.routes.services")
+logger.info("Inside consumer from app.routes")
 
 output_path = os.path.join(DATA_DIR, "sample_audio")
 os.makedirs(output_path, exist_ok=True)
@@ -27,7 +27,7 @@ def read_file(json_path):
 def consume_diarized_segments(json_path, audio_path):
 
     logger.info(f"Check json path: {json_path}")
-    logger.path(f"Check for .wav audio file: {json_path}")
+    logger.info(f"Check for .wav audio file: {audio_path}")
 
     diarization_data = read_file(json_path)
     full_audio = AudioSegment.from_wav(audio_path)

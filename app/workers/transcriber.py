@@ -1,11 +1,14 @@
 import os
 import sys
 import time
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from app.services.redis_service import redis_client
 from app.services.transcriber import transcribe_audio, load_model
 from app.logger import get_logger
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 
 logger = get_logger("worker-transcriber")
 logger.info("Inside workers.transcriber function")

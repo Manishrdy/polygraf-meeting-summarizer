@@ -2,12 +2,15 @@ import os
 import sys
 import json
 import time
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from google import genai
 from app.services.redis_service import redis_client
 from app.logger import get_logger
 from app.config import GEMINI_API_KEY, GEMINI_MODEL_NAME, GEMINI_PROMPT_INSTRUCTION
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 logger = get_logger("worker-summarizer")
 
 def check_gemini_api(GEMINI_API_KEY):

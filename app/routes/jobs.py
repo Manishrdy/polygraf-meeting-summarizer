@@ -87,7 +87,7 @@ async def submit_job(file: UploadFile = File(...), diarization_json: UploadFile 
         reason = "Failed to save uploaded files"
         raise HTTPException(status_code=500, detail=reason)
 
-    if not media_contents or not json_contents == 0:
+    if not media_contents or not json_contents:
         logger.error(f"Job {job_id} failed. No files found")
         reason = "There were no files found"
         raise HTTPException(status_code=400, detail=reason)

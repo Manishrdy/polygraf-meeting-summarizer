@@ -181,3 +181,15 @@ docker system prune -a
   }
 }
 ```
+
+## Limitations
+
+- Input must be .wav: Only .wav audio files are processed.
+- No .mp4 Support: Video processing is intentionally disabled.
+- Reason: Extracting audio from video live caused extreme CPU load and instability.
+- Your Job: You must extract the .wav from your video before calling the API.
+
+## Disclaimer
+- High Resource Use: Don't run this on a standard Windows laptop.
+- Huge Docker Images: The stack is massive (FFMPEG, PyTorch, Whisper).
+- My personal laptop actually died while running this.

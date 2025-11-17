@@ -4,14 +4,14 @@ import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from app.services.redis_service import redis_client
-from app.services.transcriber import transcribe_audio, get_model
+from app.services.transcriber import transcribe_audio, load_model_once
 from app.logger import get_logger
 
 logger = get_logger("worker-transcriber")
 
 def run_transcriber():
 
-    m = get_model()
+    m = load_model_once()
     if m is None:
         logger.info("no model")
         time.sleep(1)

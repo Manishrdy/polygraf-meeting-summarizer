@@ -5,65 +5,79 @@ from app.logger import get_logger
 
 logger = get_logger(__name__)
 
+logger.info("Inside app.services.redis_service")
+
 
 class RedisService:
     def __init__(self):
-        try:
-            self.client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True)
-            self.client.ping()
-            logger.info(f"Connected to redis at {REDIS_HOST}:{REDIS_PORT}")
-        except Exception as error:
-            logger.error(f"Failed to connect to redis: {error}")
+        host, redis_port,db, decode_responses = REDIS_HOST, REDIS_PORT, REDIS_DB, True
+        self.client = redis.Redis(host=host, port=redis_port, db=db, decode_responses=decode_responses)
 
-    def push_to_queue(self, queue_name, payload):
-        try:
-            body = json.dumps(payload)
-            self.client.rpush(queue_name, body)
-        except Exception as error:
-            logger.error(f"Error pushing to queue {queue_name}: {error}")
+        self.client.ping()
 
-    def pop_from_queue(self, queue_name, timeout=0):
-        try:
-            item = self.client.blpop(queue_name, timeout=timeout)
-            if item:
-                _, value = item
-                return json.loads(value)
-        except Exception as error:
-            logger.error(f"Error popping from queue {queue_name}: {error}")
-        return None
-
-    def create_job(self, job_id):
-        data = {
-            "status": "queued",
-            "created_at": "now",
-            "total_chunks": 0,
-            "processed_chunks": 0,
-        }
-        self.client.hset(f"job:{job_id}", mapping=data)
-
-    def update_status(self, job_id, status, **extra):
-        data = {"status": status}
-        data.update(extra)
-        self.client.hset(f"job:{job_id}", mapping=data)
-
+        logger.info(f"Redis connection successful {REDIS_HOST}:{REDIS_PORT}")
+    
     def get_job_status(self, job_id):
-        return self.client.hgetall(f"job:{job_id}")
+        key_repr = f"job:{job_id}"
+        job_id_status = self.client.hgetall(key_repr)
+        return job_id_status
 
     def increment_processed_count(self, job_id):
-        return self.client.hincrby(f"job:{job_id}", "processed_chunks", 1)
+        key_repr = f"job:{job_id}"
+        incr_val = self.client.hincrby(key_repr, "processed_chunks", 1)
+        return incr_val
 
-    def save_transcript_chunk(self, job_id, chunk_data):
+    def jobCreation(self, job_id):
+        job_key = f"Job:{job_id}"
+        self.client.hset(job_key, mapping={
+            "status": "queued",
+            "createdAt": "now",
+            "total_chunks": 0,
+            "processed_chunks": 0,
+        })
+
+    def pushIntoQueue(self, queue_name, payload):
+        body = json.dumps(payload)
+        self.client.rpush(queue_name, body)
+
+    def statusUpdate(self, job_id, status, **extra):
+        data = {
+            "status": status
+        }
+        data.update(extra)
+
+        job_key = f"job:{job_id}"
+        self.client.hset(job_key, mapping=data)
+
+    def removeFromQueue(self, queue_name, timeout=0):
+        item = self.client.blpop(queue_name, timeout=timeout)
+
+        if not item:
+            return None
+        else:
+            void, value = item
+            return json.loads(value)
+
+    def saveTranscriptsFromChunks(self, job_id, chunk_data):
         body = json.dumps(chunk_data)
-        self.client.rpush(f"job:{job_id}:transcripts", body)
+        # logger.info(f"In saveTranscriptsFromChunks {body}")
+        job_transcripts_key = f"job:{job_id}:transcripts"
+        self.client.rpush(job_transcripts_key, body)
 
-    def get_all_transcripts(self, job_id):
-        key = f"job:{job_id}:transcripts"
-        items = self.client.lrange(key, 0, -1)
-        return [json.loads(item) for item in items]
+    def getTranscripts(self, job_id):
+        job_transcripts_key = f"job:{job_id}:transcripts"
+        items = self.client.lrange(job_transcripts_key, 0, -1)
 
-    def save_final_summary(self, job_id, summary):
+        res = []
+        for item in items:
+            res.append(json.loads(item))
+        
+        return res
+
+    def save_summary(self, job_id, summary):
         body = json.dumps(summary)
-        self.client.hset(f"job:{job_id}", "result", body)
+        job_key = f"job:{job_id}"
+        self.client.hset(job_key, "result", body)
 
 
 redis_client = RedisService()

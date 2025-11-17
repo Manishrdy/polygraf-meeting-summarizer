@@ -12,11 +12,14 @@ from app.logger import get_logger
 logger = get_logger("worker-splitter")
 
 def run_splitter():
-    logger.info("Inside splitter, on queue:splitting")
+
+    print("Inside app.workers.splitter.py function")
 
     while True:
         try:
-            task = redis_client.pop_from_queue("queue:splitting", timeout=0)
+            task = redis_client.removeFromQueue("queue:splitting", timeout=0)
+            logger.info(f"Task from queue splitting - {task}")
+
             if not task:
                 continue
 
@@ -25,16 +28,15 @@ def run_splitter():
             json_path = task["json_path"]
 
             logger.info(f"Processing job: {job_id}")
-            logger.info(f"Processing media_path: {media_path}")
-            logger.info(f"Processing json_path: {json_path}")
+            logger.info(f"Cehcking media_path: {media_path}")
+            logger.info(f"View json_path: {json_path}")
 
-            redis_client.update_status(job_id, "processing_audio")
+            redis_client.statusUpdate(job_id, "processing_audio")
 
             if not media_path.lower().endswith(".wav"):
-                error_msg = "Only .wav media files are supported"
-                logger.error(f"Job {job_id}: {error_msg}")
+                logger.error("Currenly only .wav audio files are supported.")
 
-                redis_client.update_status(job_id, "failed", error=error_msg)
+                redis_client.statusUpdate(job_id, "failed", error="Only .wav files are allowed")
                 continue
             
             # audio_path = media_path
@@ -44,29 +46,32 @@ def run_splitter():
 
             segments = consume_diarized_segments(json_path, media_path)
 
-            total_chunks = len(segments)
-            redis_client.update_status(job_id, "transcribing", total_chunks=total_chunks)
-            logger.info(f"Job {job_id}: split into {total_chunks} chunks")
+            overall_chunks = len(segments)
+            redis_client.statusUpdate(job_id, "transcribing", total_chunks=overall_chunks)
+            logger.info(f"Job {job_id}: split into {overall_chunks} chunks")
 
-            if total_chunks == 0:
-                redis_client.update_status(job_id, "failed", error="No segments found")
+            if overall_chunks == 0:
+                redis_client.statusUpdate(job_id, "failed", error="segments not found")
                 continue
 
-            for segment in segments:
+            for i in segments:
                 payload = {
                     "job_id": job_id,
-                    "chunk_path": segment["file_path"],
-                    "speaker": segment["speaker"],
-                    "start_ms": segment["start"],
-                    "duration_ms": segment["duration_ms"],
+                    "chunk_path": i["file_path"],
+                    "speaker": i["speaker"],
+                    "start_ms": i["start"],
+                    "duration_ms": i["duration_ms"],
                 }
-                logger.info(f"Payload in run_splitter: {payload}")
+                logger.info(f"Payload: {payload}")
 
-                redis_client.push_to_queue("queue:transcription", payload)
+                redis_client.pushIntoQueue("queue:transcription", payload)
         except Exception as e:
-            logger.exception(f"Splitter worker failed: {e}")
+            logger.error(f"Splitter worker failed duw to: {e}")
+
             if "job_id" in locals():
-                redis_client.update_status(job_id, "failed", error=str(e))
+                error = str(e)
+                redis_client.statusUpdate(job_id, "failed", error=error)
+
             time.sleep(1)
 
 run_splitter()

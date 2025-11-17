@@ -1,30 +1,32 @@
 import os
 import sys
 import time
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from app.services.redis_service import redis_client
-from app.services.transcriber import transcribe_audio, load_model_once
+from app.services.transcriber import transcribe_audio, load_model
 from app.logger import get_logger
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 logger = get_logger("worker-transcriber")
+logger.info("Inside workers.transcriber function")
 
 def run_transcriber():
 
-    m = load_model_once()
-    if m is None:
-        logger.info("no model")
-        time.sleep(1)
+    m = load_model()
 
-    logger.info("Transcriber on 'queue:transcription")
+    if m is None:
+        logger.info("no model loaded")
+        time.sleep(1)
 
     while True:
 
         task = None
+
         try:
-            task = redis_client.pop_from_queue("queue:transcription", timeout=0)
-        except Exception as weird:
-            logger.exception("queue error %s" % weird)
+            task_name = "queue:transcription"
+            task = redis_client.removeFromQueue(task_name, timeout=0)
+        except Exception as e:
+            logger.exception(f"Error on processing queue: {e}")
             time.sleep(1)
 
         if not task:
@@ -38,7 +40,7 @@ def run_transcriber():
         try:
             text = transcribe_audio(chunk_path)
         except Exception as e:
-            logger.exception(e)
+            logger.exception(f"Error while transcribing chunks: {e}")
             text = ""
 
         chunk_data = {}
@@ -47,10 +49,11 @@ def run_transcriber():
         chunk_data["timestamp_ms"] = task.get("start_ms")
 
         try:
-            redis_client.save_transcript_chunk(job_id, chunk_data)
+            redis_client.saveTranscriptsFromChunks(job_id, chunk_data)
             new_count = redis_client.increment_processed_count(job_id)
-        except Exception as badsave:
-            logger.exception("cant save chunk: %s" % badsave)
+
+        except Exception as e:
+            logger.exception(f"Couldn't save chunks: {e}")
             continue
 
         job_info = redis_client.get_job_status(job_id)
@@ -60,14 +63,13 @@ def run_transcriber():
             total_chunks = 0
         
         total_chunks = int(total_chunks)
-        logger.info("Job " + str(job_id) + ": processed " + str(new_count) + "/" + str(total_chunks))
     
         if new_count >= total_chunks and total_chunks != 0:
             try:
-                redis_client.update_status(job_id, "summarizing")
-                redis_client.push_to_queue("queue:summary", {"job_id": job_id})
-            except Exception as meh:
-                logger.exception("cant push summary %s" % meh)
+                redis_client.statusUpdate(job_id, "summarizing")
+                redis_client.pushIntoQueue("queue:summary", {"job_id": job_id})
+            except Exception as e:
+                logger.exception(f"Cant push summar into redis: {e}")
         time.sleep(0.001)
 
 run_transcriber()

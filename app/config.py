@@ -23,8 +23,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL_NAME = os.getenv("GENAI_MODEL", "gemini-2.5-flash")
 
 DEFAULT_PROMPT = (
-    "Return ONLY strict JSON with keys: "
-    "keypoints (array of strings, 3-7), "
+    "You are a meeting summarizer, you must-"
+    "Return only strict JSON with keys "
+    "keypoints (array of strings, 3-10), "
     "decisions (array of strings), "
     "action_items (array of {owner, task, due_date}), "
     "per_speaker_summary (object mapping speaker -> short summary). "

@@ -1,21 +1,30 @@
-# app/logger.py
 import logging
 import os
+import sys
+from app.config import LOG_FILE, LOG_LEVEL
 
-# Very noob-friendly logging setup
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+LOG_LEVEL_SETTING = getattr(logging, LOG_LEVEL, logging.INFO)
 
 logger = logging.getLogger("polygraf")
-logger.setLevel(getattr(logging, LOG_LEVEL, logging.INFO))
+logger.setLevel(LOG_LEVEL_SETTING)
 
-# Avoid duplicate handlers when reloading
 if not logger.handlers:
-    handler = logging.StreamHandler()
-    handler.setLevel(getattr(logging, LOG_LEVEL, logging.INFO))
-    formatter = logging.Formatter("[%(levelname)s] %(asctime)s - %(name)s - %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    formatter_text = "[%(levelname)s] %(asctime)s - %(name)s - %(message)s"
+    formatter = logging.Formatter(formatter_text)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(LOG_LEVEL_SETTING)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
-def get_logger(name: str | None = None) -> logging.Logger:
-    """Return the root logger or a child logger."""
-    return logger if not name else logger.getChild(name)
+    try:
+        file_handler = logging.FileHandler(LOG_FILE)
+        file_handler.setLevel(LOG_LEVEL_SETTING)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    except Exception as error:
+        logger.error("Failed to create file handler at %s: %s", LOG_FILE, error)
+
+def get_logger(name=None):
+    if name:
+        return logger.getChild(name)
+    return logger

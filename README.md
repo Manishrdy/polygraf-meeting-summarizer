@@ -86,10 +86,9 @@
 │   │   ├── splitter.py
 │   │   ├── transcriber.py
 │   │   └── summarizer.py
-│   └── utils/                  # Media, Redis, and common helpers
-├── data/                       
-│   ├── audio.wav
-│   ├── diarization_response.json
+├── data/                       # Create this folder in root            
+│   ├── audio.wav               # Add your audio.wav 
+│   ├── diarization.json        # Add your diarization.json
 ├── logs/
 ├── architecture.png            # Architecture diagram (shown above)
 ├── docker-compose.yaml         # Multi-service definition

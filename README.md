@@ -130,14 +130,20 @@ WHISPER_MODEL=base
 # Build images and start all services
 docker compose up --build -d
 
-# Stop and remove container
-docker compose down
-
 # View logs
 docker compose logs -f
 
 # View all servicers
 docker compose ps
+
+# Stop and remove container
+docker compose down
+
+# Delete docker images
+docker compose down --volumes --rmi all   
+
+#Reclaim storage
+docker system prune -a
 ```
 
 ## API Endpoints

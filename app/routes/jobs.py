@@ -55,6 +55,10 @@ def format_transcripts(transcripts_list):
     }
 
 
+def save_into_file(path, data):
+    with open(path, "wb") as f:
+        f.write(data)
+
 @router.post("/jobs", status_code=202)
 async def submit_job(file: UploadFile = File(...), diarization_json: UploadFile = File(...)):
 
@@ -70,18 +74,15 @@ async def submit_job(file: UploadFile = File(...), diarization_json: UploadFile 
     local_media_path = os.path.join(job_path, f"media{file_extension}")
     local_json_path = os.path.join(job_path, "diarization.json")
 
-    media_contents = b""
-    json_contents = b""
+    media_contents = json_contents = b""
 
     try:
         media_contents = await file.read()
-        with open(local_media_path, "wb") as media_file:
-            media_file.write(media_contents)
+        save_into_file(local_media_path, media_contents)
 
         json_contents = await diarization_json.read()
+        save_into_file(local_json_path, json_contents)
 
-        with open(local_json_path, "wb") as json_file:
-            json_file.write(json_contents)
     except Exception as e:
         logger.error(f"Failed to save files {job_id}: {e}")
         reason = "Failed to save uploaded files"
